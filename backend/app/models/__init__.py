@@ -10,10 +10,18 @@ from app.models.cadastro import (
     Sku,
 )
 from app.models.estoque import EstoqueBloqueado, EstoqueTransito, SaldoEstoque
+from app.models.forecast import (
+    AjusteProjecao,
+    ClassificacaoItem,
+    HistoricoVendas,
+    Projecao,
+)
 from app.models.seguranca import PerfilAcesso, Permissao, Usuario
 
 __all__ = [
+    "AjusteProjecao",
     "CentroDistribuicao",
+    "ClassificacaoItem",
     "Comprador",
     "Departamento",
     "EstoqueBloqueado",
@@ -21,10 +29,12 @@ __all__ = [
     "Filial",
     "Fornecedor",
     "GrupoCompras",
+    "HistoricoVendas",
     "LogDecisao",
     "MotivoSilenciamento",
     "PerfilAcesso",
     "Permissao",
+    "Projecao",
     "SaldoEstoque",
     "Segmento",
     "Sku",

@@ -9,6 +9,7 @@ from app.models.cadastro import (
     Segmento,
     Sku,
 )
+from app.models.drp import OrdemCompra, OrdemTransferencia, StatusEstoqueSnapshot
 from app.models.estoque import EstoqueBloqueado, EstoqueTransito, SaldoEstoque
 from app.models.forecast import (
     AjusteProjecao,
@@ -32,11 +33,14 @@ __all__ = [
     "HistoricoVendas",
     "LogDecisao",
     "MotivoSilenciamento",
+    "OrdemCompra",
+    "OrdemTransferencia",
     "PerfilAcesso",
     "Permissao",
     "Projecao",
     "SaldoEstoque",
     "Segmento",
     "Sku",
+    "StatusEstoqueSnapshot",
     "Usuario",
 ]

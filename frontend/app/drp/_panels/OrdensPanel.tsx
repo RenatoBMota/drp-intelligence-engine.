@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api, OrdemCompra, OrdemTransferencia } from "@/lib/api";
 import { Badge, Button, Card, ErrorBanner, Table } from "@/components/ui";
+import { contarOcorrencias, Slicer } from "@/components/Slicer";
 
 const STATUS_SEGUINTE: Record<string, string | null> = {
   SUGERIDA: "APROVADA",
@@ -17,6 +18,7 @@ export default function OrdensPanel() {
   const [compras, setCompras] = useState<OrdemCompra[]>([]);
   const [atrasadas, setAtrasadas] = useState<OrdemTransferencia[]>([]);
   const [erro, setErro] = useState<string | null>(null);
+  const [statusSelecionado, setStatusSelecionado] = useState<string[]>([]);
 
   const carregar = () =>
     Promise.all([api.drp.ordensTransferencia(), api.drp.ordensCompra(), api.drp.alertasDesvio()])
@@ -55,15 +57,27 @@ export default function OrdensPanel() {
 
   const idsAtrasadas = new Set(atrasadas.map((o) => o.id));
 
+  const opcoesStatus = useMemo(
+    () => contarOcorrencias([...transferencias, ...compras], (o) => o.status),
+    [transferencias, compras]
+  );
+
+  const transferenciasFiltradas = transferencias.filter(
+    (o) => statusSelecionado.length === 0 || statusSelecionado.includes(o.status)
+  );
+  const comprasFiltradas = compras.filter((o) => statusSelecionado.length === 0 || statusSelecionado.includes(o.status));
+
   return (
     <div>
       <p className="mb-4 text-sm text-slate-400">Transferências e compras geradas pelo Motor DRP.</p>
       {erro && <ErrorBanner message={erro} />}
 
+      <Slicer label="Status" options={opcoesStatus} selected={statusSelecionado} onChange={setStatusSelecionado} />
+
       <Card className="mb-6">
         <h2 className="mb-3 text-sm font-semibold text-slate-200">Ordens de Transferência</h2>
         <Table headers={["Quantidade", "Status", "Chegada estimada", "Score", "", ""]}>
-          {transferencias.map((o) => (
+          {transferenciasFiltradas.map((o) => (
             <tr key={o.id}>
               <td className="px-3 py-2">{o.quantidade}</td>
               <td className="px-3 py-2">
@@ -85,12 +99,15 @@ export default function OrdensPanel() {
             </tr>
           ))}
         </Table>
+        {transferenciasFiltradas.length === 0 && transferencias.length > 0 && (
+          <p className="mt-3 text-sm text-slate-500">Nenhuma transferência corresponde ao filtro selecionado.</p>
+        )}
       </Card>
 
       <Card>
         <h2 className="mb-3 text-sm font-semibold text-slate-200">Ordens de Compra</h2>
         <Table headers={["Quantidade", "Status", "Previsão", "Score", "", ""]}>
-          {compras.map((o) => (
+          {comprasFiltradas.map((o) => (
             <tr key={o.id}>
               <td className="px-3 py-2">{o.quantidade}</td>
               <td className="px-3 py-2">
@@ -109,6 +126,9 @@ export default function OrdensPanel() {
             </tr>
           ))}
         </Table>
+        {comprasFiltradas.length === 0 && compras.length > 0 && (
+          <p className="mt-3 text-sm text-slate-500">Nenhuma compra corresponde ao filtro selecionado.</p>
+        )}
       </Card>
     </div>
   );

@@ -1,8 +1,9 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { api, CentroDistribuicao, Filial, SaldoEstoque, Sku } from "@/lib/api";
 import { Button, Card, ErrorBanner, Input, Label, PageHeader, Select, Table } from "@/components/ui";
+import { Slicer } from "@/components/Slicer";
 
 export default function EstoquePage() {
   const [saldos, setSaldos] = useState<SaldoEstoque[]>([]);
@@ -12,6 +13,7 @@ export default function EstoquePage() {
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
   const [tipoElo, setTipoElo] = useState<"cd" | "filial">("filial");
+  const [eloSelecionado, setEloSelecionado] = useState<string[]>([]);
 
   const carregar = () =>
     Promise.all([api.estoque.list(), api.skus.list(), api.centrosDistribuicao.list(), api.filiais.list()])
@@ -55,6 +57,19 @@ export default function EstoquePage() {
       setSalvando(false);
     }
   };
+
+  const opcoesElo = useMemo(() => {
+    const cd = saldos.filter((s) => s.cd_id).length;
+    const filial = saldos.filter((s) => s.filial_id).length;
+    return [
+      { value: "cd", label: "CD", count: cd },
+      { value: "filial", label: "Filial", count: filial },
+    ].filter((o) => o.count > 0);
+  }, [saldos]);
+
+  const filtrados = saldos.filter(
+    (s) => eloSelecionado.length === 0 || eloSelecionado.includes(s.cd_id ? "cd" : "filial")
+  );
 
   return (
     <div>
@@ -111,8 +126,10 @@ export default function EstoquePage() {
         </p>
       </Card>
 
+      <Slicer label="Tipo de elo" options={opcoesElo} selected={eloSelecionado} onChange={setEloSelecionado} />
+
       <Table headers={["SKU", "Elo", "Quantidade"]}>
-        {saldos.map((s) => (
+        {filtrados.map((s) => (
           <tr key={s.id}>
             <td className="px-3 py-2 font-medium">{nomeSku(s.sku_id)}</td>
             <td className="px-3 py-2 text-slate-400">{nomeElo(s.cd_id, s.filial_id)}</td>
@@ -120,6 +137,9 @@ export default function EstoquePage() {
           </tr>
         ))}
       </Table>
+      {filtrados.length === 0 && saldos.length > 0 && (
+        <p className="mt-3 text-sm text-slate-500">Nenhum saldo corresponde ao filtro selecionado.</p>
+      )}
     </div>
   );
 }

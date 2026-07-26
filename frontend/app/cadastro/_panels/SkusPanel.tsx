@@ -1,14 +1,17 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { api, Fornecedor, Sku } from "@/lib/api";
 import { Badge, Button, Card, ErrorBanner, Input, Label, Select, Table } from "@/components/ui";
+import { Slicer } from "@/components/Slicer";
 
 export default function SkusPanel() {
   const [skus, setSkus] = useState<Sku[]>([]);
   const [fornecedores, setFornecedores] = useState<Fornecedor[]>([]);
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
+  const [statusSelecionado, setStatusSelecionado] = useState<string[]>([]);
+  const [criticidadeSelecionada, setCriticidadeSelecionada] = useState<string[]>([]);
 
   const carregar = () =>
     Promise.all([api.skus.list(), api.fornecedores.list()])
@@ -63,6 +66,30 @@ export default function SkusPanel() {
       setErro(String(err));
     }
   };
+
+  const opcoesStatus = useMemo(() => {
+    const ativos = skus.filter((s) => s.ativo).length;
+    const inativos = skus.length - ativos;
+    return [
+      { value: "ativo", label: "Ativo", count: ativos },
+      { value: "inativo", label: "Inativo", count: inativos },
+    ].filter((o) => o.count > 0);
+  }, [skus]);
+
+  const opcoesCriticidade = useMemo(() => {
+    const contagem = new Map<string, number>();
+    for (const s of skus) {
+      const k = s.criticidade_resultado ?? "—";
+      contagem.set(k, (contagem.get(k) ?? 0) + 1);
+    }
+    return Array.from(contagem.entries()).map(([value, count]) => ({ value, label: value, count }));
+  }, [skus]);
+
+  const filtrados = skus.filter(
+    (s) =>
+      (statusSelecionado.length === 0 || statusSelecionado.includes(s.ativo ? "ativo" : "inativo")) &&
+      (criticidadeSelecionada.length === 0 || criticidadeSelecionada.includes(s.criticidade_resultado ?? "—"))
+  );
 
   return (
     <div>
@@ -155,8 +182,18 @@ export default function SkusPanel() {
         </form>
       </Card>
 
+      <div className="mb-2 grid gap-4 md:grid-cols-2">
+        <Slicer label="Status" options={opcoesStatus} selected={statusSelecionado} onChange={setStatusSelecionado} />
+        <Slicer
+          label="Criticidade de Resultado"
+          options={opcoesCriticidade}
+          selected={criticidadeSelecionada}
+          onChange={setCriticidadeSelecionada}
+        />
+      </div>
+
       <Table headers={["Código", "Descrição", "Criticidade", "Lead time", "Est. Segurança", "Pto. Pedido", "Est. Máximo", "Status", ""]}>
-        {skus.map((sku) => (
+        {filtrados.map((sku) => (
           <tr key={sku.id}>
             <td className="px-3 py-2 font-medium">{sku.codigo}</td>
             <td className="px-3 py-2 text-slate-400">{sku.descricao}</td>
@@ -176,6 +213,9 @@ export default function SkusPanel() {
           </tr>
         ))}
       </Table>
+      {filtrados.length === 0 && skus.length > 0 && (
+        <p className="mt-3 text-sm text-slate-500">Nenhum SKU corresponde aos filtros selecionados.</p>
+      )}
     </div>
   );
 }

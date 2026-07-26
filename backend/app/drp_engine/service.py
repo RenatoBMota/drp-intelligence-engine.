@@ -144,6 +144,7 @@ async def recalcular_sku_elo(
     sku_id: uuid.UUID,
     cd_id: uuid.UUID | None = None,
     filial_id: uuid.UUID | None = None,
+    pesos_priorizacao: dict[str, float] | None = None,
 ) -> ResultadoRecalculo:
     sku = await db.get(Sku, sku_id)
     if sku is None:
@@ -222,6 +223,7 @@ async def recalcular_sku_elo(
                 sku.custo_aquisicao,
                 cobertura_atual_dias=avaliacao.cobertura_dias,
                 frequencia_saida=sku.frequencia_saida,
+                pesos=pesos_priorizacao,
             )
             ordem, justificativa = await decidir_ressuprimento(db, sku, elo, necessidade, score)
             tipo_ordem = "ordem_transferencia" if isinstance(ordem, OrdemTransferencia) else "ordem_compra"

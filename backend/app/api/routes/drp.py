@@ -28,7 +28,11 @@ router = APIRouter(prefix="/drp", tags=["drp"])
 async def recalcular(payload: RecalcularRequest, db: DbSession) -> RecalcularResponse:
     try:
         resultado = await recalcular_sku_elo(
-            db, sku_id=payload.sku_id, cd_id=payload.cd_id, filial_id=payload.filial_id
+            db,
+            sku_id=payload.sku_id,
+            cd_id=payload.cd_id,
+            filial_id=payload.filial_id,
+            pesos_priorizacao=payload.pesos_priorizacao,
         )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

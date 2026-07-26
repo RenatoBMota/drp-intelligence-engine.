@@ -11,6 +11,9 @@ class RecalcularRequest(BaseModel):
     sku_id: uuid.UUID
     cd_id: uuid.UUID | None = None
     filial_id: uuid.UUID | None = None
+    pesos_priorizacao: dict[str, float] | None = None
+    """Override dos pesos w1..w4 da fórmula de score (roadmap seção 6.5).
+    Se omitido, usa o default de `drp_engine.priorizacao.PESOS_PADRAO`."""
 
     @model_validator(mode="after")
     def _validar_elo(self) -> "RecalcularRequest":

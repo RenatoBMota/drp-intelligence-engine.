@@ -18,6 +18,7 @@ from app.models.forecast import (
     Projecao,
 )
 from app.models.seguranca import PerfilAcesso, Permissao, Usuario
+from app.models.transporte import Rota
 
 __all__ = [
     "AjusteProjecao",
@@ -38,6 +39,7 @@ __all__ = [
     "PerfilAcesso",
     "Permissao",
     "Projecao",
+    "Rota",
     "SaldoEstoque",
     "Segmento",
     "Sku",

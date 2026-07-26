@@ -1,9 +1,10 @@
 """Conector ERP (roadmap seção 9): cadastro de itens, custos, entrada de NF.
 
-Nenhum ERP alvo foi definido ainda no roadmap (seção 13). Esta interface
-define o contrato que qualquer implementação concreta (SAP, TOTVS, Oracle
-etc.) deve cumprir; a implementação real entra quando o sistema for
-escolhido.
+ERP alvo definido (issue #11): WinThor (TOTVS) — ver
+`app/connectors/winthor.py` para a implementação concreta
+(`WinthorErpConnector`). Esta interface é o contrato que qualquer
+implementação deve cumprir; `NullErpConnector` segue disponível como
+default até o WinThor real ser configurado (`settings.winthor_database_url`).
 """
 
 from abc import ABC, abstractmethod

@@ -1,6 +1,9 @@
 """Conector WMS (roadmap seção 9): saldo físico por CD, status de separação.
 
-Assim como o ERP, o WMS alvo ainda não foi definido (roadmap seção 13).
+WMS alvo definido (issue #11): o próprio WinThor (TOTVS) cobre esse papel
+também — ver `app/connectors/winthor.py` (`WinthorWmsConnector`).
+`NullWmsConnector` segue disponível como default até o WinThor real ser
+configurado (`settings.winthor_database_url`).
 """
 
 from abc import ABC, abstractmethod

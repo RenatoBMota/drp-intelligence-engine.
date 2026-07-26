@@ -74,3 +74,7 @@ class SkuRead(SkuCreate):
 
     id: uuid.UUID
     ativo: bool
+
+
+class AtualizarAtivoSkuRequest(BaseModel):
+    ativo: bool

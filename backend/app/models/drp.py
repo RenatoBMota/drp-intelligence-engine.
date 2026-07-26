@@ -68,6 +68,9 @@ class OrdemTransferencia(UUIDPkMixin, TimestampMixin, Base):
     )
     score_criticidade: Mapped[float] = mapped_column(Numeric(10, 4))
     justificativa: Mapped[str] = mapped_column(String(1000))
+    data_conclusao: Mapped[date | None] = mapped_column(Date)
+    """Preenchida quando o status muda para CONCLUIDA — base para OTIF e
+    Lead Time Efetivo vs. planejado (roadmap seção 10.4, Fase 5)."""
 
     sku: Mapped["Sku"] = relationship()  # noqa: F821
 
@@ -98,6 +101,7 @@ class OrdemCompra(UUIDPkMixin, TimestampMixin, Base):
     )
     score_criticidade: Mapped[float] = mapped_column(Numeric(10, 4))
     justificativa: Mapped[str] = mapped_column(String(1000))
+    data_conclusao: Mapped[date | None] = mapped_column(Date)
 
     sku: Mapped["Sku"] = relationship()  # noqa: F821
 

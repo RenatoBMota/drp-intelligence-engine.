@@ -1,4 +1,5 @@
 import uuid
+from datetime import date
 
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import select
@@ -7,7 +8,7 @@ from app.api.deps import DbSession
 from app.drp_engine.alertas import detectar_transferencias_atrasadas
 from app.drp_engine.service import recalcular_sku_elo
 from app.models.auditoria import LogDecisao, MotivoSilenciamento
-from app.models.drp import OrdemCompra, OrdemTransferencia, StatusEstoqueSnapshot
+from app.models.drp import OrdemCompra, OrdemTransferencia, StatusEstoqueSnapshot, StatusOrdem
 from app.schemas.drp import (
     AtualizarStatusOrdemRequest,
     LogDecisaoRead,
@@ -63,6 +64,8 @@ async def atualizar_status_ordem_transferencia(
     if ordem is None:
         raise HTTPException(status_code=404, detail="Ordem de transferência não encontrada")
     ordem.status = payload.status
+    if payload.status == StatusOrdem.CONCLUIDA:
+        ordem.data_conclusao = payload.data_conclusao or date.today()
     await db.commit()
     await db.refresh(ordem)
     return ordem
@@ -72,6 +75,21 @@ async def atualizar_status_ordem_transferencia(
 async def listar_ordens_compra(db: DbSession) -> list[OrdemCompra]:
     result = await db.execute(select(OrdemCompra).order_by(OrdemCompra.score_criticidade.desc()))
     return list(result.scalars().all())
+
+
+@router.patch("/ordens-compra/{ordem_id}", response_model=OrdemCompraRead)
+async def atualizar_status_ordem_compra(
+    ordem_id: uuid.UUID, payload: AtualizarStatusOrdemRequest, db: DbSession
+) -> OrdemCompra:
+    ordem = await db.get(OrdemCompra, ordem_id)
+    if ordem is None:
+        raise HTTPException(status_code=404, detail="Ordem de compra não encontrada")
+    ordem.status = payload.status
+    if payload.status == StatusOrdem.CONCLUIDA:
+        ordem.data_conclusao = payload.data_conclusao or date.today()
+    await db.commit()
+    await db.refresh(ordem)
+    return ordem
 
 
 @router.get("/alertas-desvio", response_model=list[OrdemTransferenciaRead])

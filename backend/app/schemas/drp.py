@@ -46,6 +46,7 @@ class OrdemTransferenciaRead(BaseModel):
     status: StatusOrdem
     score_criticidade: float
     justificativa: str
+    data_conclusao: date | None
 
 
 class OrdemCompraRead(BaseModel):
@@ -62,6 +63,7 @@ class OrdemCompraRead(BaseModel):
     status: StatusOrdem
     score_criticidade: float
     justificativa: str
+    data_conclusao: date | None
 
 
 class RecalcularResponse(BaseModel):
@@ -73,6 +75,8 @@ class RecalcularResponse(BaseModel):
 
 class AtualizarStatusOrdemRequest(BaseModel):
     status: StatusOrdem
+    data_conclusao: date | None = None
+    """Só usado quando status=CONCLUIDA. Se omitido, usa a data atual."""
 
 
 class MotivoSilenciamentoCreate(BaseModel):

@@ -192,7 +192,18 @@ async def recalcular_sku_elo(
     ordem: OrdemTransferencia | OrdemCompra | None = None
     silenciado_motivo: str | None = None
 
-    if necessidade > 0:
+    if necessidade > 0 and not sku.ativo:
+        silenciado_motivo = "SKU inativado (roadmap seção 4.11/11 — governança e saneamento)"
+        db.add(
+            LogDecisao(
+                entidade="sku",
+                entidade_id=sku_id,
+                acao="SUGESTAO_SUPRIMIDA_SKU_INATIVO",
+                motivo=f"Necessidade de {necessidade:.2f} un. não gerou ordem: SKU inativo.",
+                tipo_autor=TipoAutor.SISTEMA,
+            )
+        )
+    elif necessidade > 0:
         motivo_silenciamento = await _sku_silenciado(db, sku_id)
         if motivo_silenciamento is not None:
             silenciado_motivo = motivo_silenciamento.motivo

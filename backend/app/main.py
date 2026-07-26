@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.api.routes import drp, estoque, filiais, forecast, fornecedores, health, skus
+from app.api.routes import analytics, drp, estoque, filiais, forecast, fornecedores, health, skus
 from app.core.config import settings
 
 app = FastAPI(title=settings.app_name)
@@ -12,3 +12,4 @@ app.include_router(filiais.router)
 app.include_router(forecast.router)
 app.include_router(drp.router)
 app.include_router(estoque.router)
+app.include_router(analytics.router)

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api, Sku, StatusEstoque } from "@/lib/api";
-import { Badge, ErrorBanner, PageHeader, Table } from "@/components/ui";
+import { Badge, ErrorBanner, Table } from "@/components/ui";
 
 const TONE: Record<string, "danger" | "warning" | "success" | "neutral"> = {
   RUPTURA: "danger",
@@ -13,7 +13,7 @@ const TONE: Record<string, "danger" | "warning" | "success" | "neutral"> = {
   EXCESSO: "neutral",
 };
 
-export default function StatusPage() {
+export default function StatusPanel() {
   const [status, setStatus] = useState<StatusEstoque[]>([]);
   const [skus, setSkus] = useState<Sku[]>([]);
   const [erro, setErro] = useState<string | null>(null);
@@ -31,10 +31,9 @@ export default function StatusPage() {
 
   return (
     <div>
-      <PageHeader
-        title="Status de Ruptura"
-        subtitle="Histórico de snapshots calculados pelo Motor DRP (mais recente primeiro)."
-      />
+      <p className="mb-4 text-sm text-slate-400">
+        Histórico de snapshots calculados pelo Motor DRP (mais recente primeiro).
+      </p>
       {erro && <ErrorBanner message={erro} />}
 
       <Table headers={["SKU", "Elo", "Necessidade líquida", "Status", "Calculado em"]}>

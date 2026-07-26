@@ -2,9 +2,9 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { api, Fornecedor, Sku } from "@/lib/api";
-import { Badge, Button, Card, ErrorBanner, Input, Label, PageHeader, Select, Table } from "@/components/ui";
+import { Badge, Button, Card, ErrorBanner, Input, Label, Select, Table } from "@/components/ui";
 
-export default function SkusPage() {
+export default function SkusPanel() {
   const [skus, setSkus] = useState<Sku[]>([]);
   const [fornecedores, setFornecedores] = useState<Fornecedor[]>([]);
   const [erro, setErro] = useState<string | null>(null);
@@ -66,10 +66,9 @@ export default function SkusPage() {
 
   return (
     <div>
-      <PageHeader
-        title="SKUs"
-        subtitle="Ficha de produto: parâmetros de reposição e classificações (roadmap seção 4.6)."
-      />
+      <p className="mb-4 text-sm text-slate-400">
+        Ficha de produto: parâmetros de reposição e classificações (roadmap seção 4.6).
+      </p>
       {erro && <ErrorBanner message={erro} />}
 
       <Card className="mb-6">

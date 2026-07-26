@@ -2,9 +2,9 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { api, CentroDistribuicao, Filial } from "@/lib/api";
-import { Button, Card, ErrorBanner, Input, Label, PageHeader, Select, Table } from "@/components/ui";
+import { Button, Card, ErrorBanner, Input, Label, Select, Table } from "@/components/ui";
 
-export default function RedePage() {
+export default function RedePanel() {
   const [cds, setCds] = useState<CentroDistribuicao[]>([]);
   const [filiais, setFiliais] = useState<Filial[]>([]);
   const [erro, setErro] = useState<string | null>(null);
@@ -64,7 +64,7 @@ export default function RedePage() {
 
   return (
     <div>
-      <PageHeader title="Rede: Centros de Distribuição e Filiais" subtitle="Os elos que o Motor DRP enxerga." />
+      <p className="mb-4 text-sm text-slate-400">Os elos que o Motor DRP enxerga.</p>
       {erro && <ErrorBanner message={erro} />}
 
       <div className="mb-6 grid gap-4 md:grid-cols-2">

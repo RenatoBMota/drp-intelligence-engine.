@@ -2,10 +2,10 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { api, ResultadoOtimizacao, Rota, Sku } from "@/lib/api";
-import { Badge, Button, Card, ErrorBanner, Input, Label, PageHeader, Select, Table } from "@/components/ui";
+import { Badge, Button, Card, ErrorBanner, Input, Label, Select, Table } from "@/components/ui";
 import { useConfiguracao } from "@/lib/config";
 
-export default function OtimizarPage() {
+export default function OtimizarPanel() {
   const [skus, setSkus] = useState<Sku[]>([]);
   const [rotas, setRotas] = useState<Rota[]>([]);
   const [skuId, setSkuId] = useState("");
@@ -47,10 +47,9 @@ export default function OtimizarPage() {
 
   return (
     <div>
-      <PageHeader
-        title="Otimização de Rede / Simulação de Cenários"
-        subtitle="Programação Linear: aloca excedente aos elos com necessidade minimizando custo total, respeitando capacidade de rota."
-      />
+      <p className="mb-4 text-sm text-slate-400">
+        Programação Linear: aloca excedente aos elos com necessidade minimizando custo total, respeitando capacidade de rota.
+      </p>
       {erro && <ErrorBanner message={erro} />}
 
       <Card className="mb-6">

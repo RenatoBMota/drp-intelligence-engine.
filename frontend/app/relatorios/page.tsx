@@ -3,9 +3,18 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { Button, Card, ErrorBanner, PageHeader, Table } from "@/components/ui";
+import { TabBar } from "@/components/Tabs";
 import { useConfiguracao } from "@/lib/config";
 
+const TABS = [
+  { id: "ruptura", label: "Ruptura Geral" },
+  { id: "otif", label: "OTIF (On Time)" },
+  { id: "pendentes", label: "Pedidos Pendentes" },
+  { id: "no-moving", label: "Sugestão de Inativação" },
+];
+
 export default function RelatoriosPage() {
+  const [tab, setTab] = useState(TABS[0].id);
   const [rupturaGeral, setRupturaGeral] = useState<Record<string, number>>({});
   const [otif, setOtif] = useState<{ n_ordens_concluidas: number; n_no_prazo: number; otif: number | null } | null>(null);
   const [pendentes, setPendentes] = useState<{ transferencias: any[]; compras: any[] }>({ transferencias: [], compras: [] });
@@ -32,9 +41,22 @@ export default function RelatoriosPage() {
   return (
     <div>
       <PageHeader title="Relatórios" subtitle="Indicadores e relatórios herdados do benchmark Systock (Torre de Controle)." />
+      <TabBar
+        tabs={TABS.map((t) => ({
+          ...t,
+          badge:
+            t.id === "pendentes"
+              ? pendentes.transferencias.length + pendentes.compras.length
+              : t.id === "no-moving"
+              ? noMoving.length
+              : undefined,
+        }))}
+        active={tab}
+        onChange={setTab}
+      />
       {erro && <ErrorBanner message={erro} />}
 
-      <div className="mb-6 grid gap-4 md:grid-cols-2">
+      {tab === "ruptura" && (
         <Card>
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-sm font-semibold text-slate-200">Ruptura Geral</h2>
@@ -51,11 +73,13 @@ export default function RelatoriosPage() {
             ))}
           </Table>
         </Card>
+      )}
 
+      {tab === "otif" && (
         <Card>
           <h2 className="mb-3 text-sm font-semibold text-slate-200">OTIF (On Time)</h2>
           {otif && (
-            <div className="flex flex-col gap-2 text-sm">
+            <div className="flex max-w-sm flex-col gap-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-slate-400">Ordens concluídas</span>
                 <span>{otif.n_ordens_concluidas}</span>
@@ -74,34 +98,38 @@ export default function RelatoriosPage() {
             </div>
           )}
         </Card>
-      </div>
+      )}
 
-      <Card className="mb-6">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-slate-200">Pedidos Pendentes</h2>
-          <a href={api.relatorios.exportarUrl("pedidos-pendentes")}>
-            <Button variant="secondary">Exportar .xlsx</Button>
-          </a>
-        </div>
-        <p className="text-sm text-slate-400">
-          {pendentes.transferencias.length} transferência(s), {pendentes.compras.length} compra(s) em aberto.
-        </p>
-      </Card>
+      {tab === "pendentes" && (
+        <Card>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-slate-200">Pedidos Pendentes</h2>
+            <a href={api.relatorios.exportarUrl("pedidos-pendentes")}>
+              <Button variant="secondary">Exportar .xlsx</Button>
+            </a>
+          </div>
+          <p className="text-sm text-slate-400">
+            {pendentes.transferencias.length} transferência(s), {pendentes.compras.length} compra(s) em aberto.
+          </p>
+        </Card>
+      )}
 
-      <Card>
-        <h2 className="mb-3 text-sm font-semibold text-slate-200">
-          Sugestão de Inativação (No Moving — {config.diasNoMoving} dias sem venda)
-        </h2>
-        <Table headers={["Código", "Descrição"]}>
-          {noMoving.map((s) => (
-            <tr key={s.id}>
-              <td className="px-3 py-2">{s.codigo}</td>
-              <td className="px-3 py-2 text-slate-400">{s.descricao}</td>
-            </tr>
-          ))}
-        </Table>
-        {noMoving.length === 0 && <p className="text-sm text-slate-500">Nenhum SKU parado no período.</p>}
-      </Card>
+      {tab === "no-moving" && (
+        <Card>
+          <h2 className="mb-3 text-sm font-semibold text-slate-200">
+            Sugestão de Inativação (No Moving — {config.diasNoMoving} dias sem venda)
+          </h2>
+          <Table headers={["Código", "Descrição"]}>
+            {noMoving.map((s) => (
+              <tr key={s.id}>
+                <td className="px-3 py-2">{s.codigo}</td>
+                <td className="px-3 py-2 text-slate-400">{s.descricao}</td>
+              </tr>
+            ))}
+          </Table>
+          {noMoving.length === 0 && <p className="text-sm text-slate-500">Nenhum SKU parado no período.</p>}
+        </Card>
+      )}
     </div>
   );
 }

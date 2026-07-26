@@ -2,11 +2,11 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { api, CentroDistribuicao, Filial, Rota } from "@/lib/api";
-import { Button, Card, ErrorBanner, Input, Label, PageHeader, Select, Table } from "@/components/ui";
+import { Button, Card, ErrorBanner, Input, Label, Select, Table } from "@/components/ui";
 
 type TipoElo = "cd" | "filial";
 
-export default function RotasPage() {
+export default function RotasPanel() {
   const [rotas, setRotas] = useState<Rota[]>([]);
   const [cds, setCds] = useState<CentroDistribuicao[]>([]);
   const [filiais, setFiliais] = useState<Filial[]>([]);
@@ -61,10 +61,9 @@ export default function RotasPage() {
 
   return (
     <div>
-      <PageHeader
-        title="Rotas"
-        subtitle="Capacidade, custo e lead time de transporte entre elos — usadas pela otimização de rede."
-      />
+      <p className="mb-4 text-sm text-slate-400">
+        Capacidade, custo e lead time de transporte entre elos — usadas pela otimização de rede.
+      </p>
       {erro && <ErrorBanner message={erro} />}
 
       <Card className="mb-6">

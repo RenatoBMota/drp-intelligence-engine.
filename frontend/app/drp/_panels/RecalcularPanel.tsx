@@ -2,12 +2,12 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { api, CentroDistribuicao, Filial, Sku } from "@/lib/api";
-import { Badge, Button, Card, ErrorBanner, Label, PageHeader, Select } from "@/components/ui";
+import { Badge, Button, Card, ErrorBanner, Label, Select } from "@/components/ui";
 import { pesosPriorizacao, useConfiguracao } from "@/lib/config";
 
 type Resultado = Awaited<ReturnType<typeof api.drp.recalcular>>;
 
-export default function RecalcularPage() {
+export default function RecalcularPanel() {
   const [skus, setSkus] = useState<Sku[]>([]);
   const [cds, setCds] = useState<CentroDistribuicao[]>([]);
   const [filiais, setFiliais] = useState<Filial[]>([]);
@@ -50,10 +50,9 @@ export default function RecalcularPage() {
 
   return (
     <div>
-      <PageHeader
-        title="Recalcular Motor DRP"
-        subtitle="Necessidade líquida → status de ruptura → decisão de ressuprimento, para um SKU/elo."
-      />
+      <p className="mb-4 text-sm text-slate-400">
+        Necessidade líquida → status de ruptura → decisão de ressuprimento, para um SKU/elo.
+      </p>
       {erro && <ErrorBanner message={erro} />}
 
       <Card className="mb-6">

@@ -2,70 +2,58 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { ComponentType } from "react";
+import {
+  IconCadastro,
+  IconConfig,
+  IconDashboard,
+  IconEstoque,
+  IconMotor,
+  IconOtimizacao,
+  IconRelatorios,
+} from "@/components/icons";
 
-const SECOES: { titulo: string; itens: { href: string; label: string }[] }[] = [
-  { titulo: "", itens: [{ href: "/", label: "Dashboard" }] },
-  {
-    titulo: "Cadastro",
-    itens: [
-      { href: "/cadastro/skus", label: "SKUs" },
-      { href: "/cadastro/rede", label: "Rede (CDs / Filiais)" },
-      { href: "/cadastro/fornecedores", label: "Fornecedores" },
-    ],
-  },
-  { titulo: "Estoque", itens: [{ href: "/estoque", label: "Saldo por elo" }] },
-  {
-    titulo: "Motor DRP",
-    itens: [
-      { href: "/drp/recalcular", label: "Recalcular" },
-      { href: "/drp/status", label: "Status de ruptura" },
-      { href: "/drp/ordens", label: "Ordens" },
-    ],
-  },
-  {
-    titulo: "Otimização",
-    itens: [
-      { href: "/otimizacao/rotas", label: "Rotas" },
-      { href: "/otimizacao/otimizar", label: "Otimizar / Simular" },
-    ],
-  },
-  { titulo: "", itens: [{ href: "/relatorios", label: "Relatórios" }] },
-  { titulo: "", itens: [{ href: "/configuracoes", label: "Configurações" }] },
+const ITENS: { href: string; label: string; icon: ComponentType<{ className?: string }> }[] = [
+  { href: "/", label: "Dashboard", icon: IconDashboard },
+  { href: "/cadastro", label: "Cadastro", icon: IconCadastro },
+  { href: "/estoque", label: "Estoque", icon: IconEstoque },
+  { href: "/drp", label: "Motor DRP", icon: IconMotor },
+  { href: "/otimizacao", label: "Otimização", icon: IconOtimizacao },
+  { href: "/relatorios", label: "Relatórios", icon: IconRelatorios },
+  { href: "/configuracoes", label: "Configurações", icon: IconConfig },
 ];
 
 export default function Nav() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex w-60 shrink-0 flex-col gap-5 border-r border-slate-800 bg-slate-950 px-4 py-6">
-      <Link href="/" className="px-2 text-sm font-semibold tracking-tight text-slate-100">
+    <nav className="flex w-60 shrink-0 flex-col gap-1 border-r border-slate-800 bg-slate-950 px-3 py-6">
+      <Link href="/" className="mb-5 flex items-center gap-2 px-2 text-sm font-semibold tracking-tight text-slate-100">
+        <span className="flex h-6 w-6 items-center justify-center rounded-md bg-sky-500/15 text-xs font-bold text-sky-400">
+          D
+        </span>
         DRP Intelligence Engine
       </Link>
-      {SECOES.map((secao, i) => (
-        <div key={i} className="flex flex-col gap-1">
-          {secao.titulo && (
-            <span className="px-2 text-xs font-medium uppercase tracking-wide text-slate-500">
-              {secao.titulo}
-            </span>
-          )}
-          {secao.itens.map((item) => {
-            const ativo = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`rounded-md px-2 py-1.5 text-sm transition-colors ${
-                  ativo
-                    ? "bg-slate-800 text-slate-50"
-                    : "text-slate-400 hover:bg-slate-900 hover:text-slate-200"
-                }`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </div>
-      ))}
+      {ITENS.map((item) => {
+        const ativo = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+        const Icon = item.icon;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`group flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm transition-colors ${
+              ativo
+                ? "bg-sky-500/10 text-sky-300"
+                : "text-slate-400 hover:bg-slate-900 hover:text-slate-200"
+            }`}
+          >
+            <Icon
+              className={`h-4 w-4 shrink-0 ${ativo ? "text-sky-400" : "text-slate-500 group-hover:text-slate-300"}`}
+            />
+            {item.label}
+          </Link>
+        );
+      })}
     </nav>
   );
 }

@@ -2,9 +2,9 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { api, Fornecedor } from "@/lib/api";
-import { Button, Card, ErrorBanner, Input, Label, PageHeader, Table } from "@/components/ui";
+import { Button, Card, ErrorBanner, Input, Label, Table } from "@/components/ui";
 
-export default function FornecedoresPage() {
+export default function FornecedoresPanel() {
   const [fornecedores, setFornecedores] = useState<Fornecedor[]>([]);
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
@@ -38,7 +38,7 @@ export default function FornecedoresPage() {
 
   return (
     <div>
-      <PageHeader title="Fornecedores" subtitle="Cadastro básico de fornecedores." />
+      <p className="mb-4 text-sm text-slate-400">Cadastro básico de fornecedores.</p>
       {erro && <ErrorBanner message={erro} />}
 
       <Card className="mb-6">

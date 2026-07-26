@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api, OrdemCompra, OrdemTransferencia } from "@/lib/api";
-import { Badge, Button, Card, ErrorBanner, PageHeader, Table } from "@/components/ui";
+import { Badge, Button, Card, ErrorBanner, Table } from "@/components/ui";
 
 const STATUS_SEGUINTE: Record<string, string | null> = {
   SUGERIDA: "APROVADA",
@@ -12,7 +12,7 @@ const STATUS_SEGUINTE: Record<string, string | null> = {
   CANCELADA: null,
 };
 
-export default function OrdensPage() {
+export default function OrdensPanel() {
   const [transferencias, setTransferencias] = useState<OrdemTransferencia[]>([]);
   const [compras, setCompras] = useState<OrdemCompra[]>([]);
   const [atrasadas, setAtrasadas] = useState<OrdemTransferencia[]>([]);
@@ -57,7 +57,7 @@ export default function OrdensPage() {
 
   return (
     <div>
-      <PageHeader title="Ordens" subtitle="Transferências e compras geradas pelo Motor DRP." />
+      <p className="mb-4 text-sm text-slate-400">Transferências e compras geradas pelo Motor DRP.</p>
       {erro && <ErrorBanner message={erro} />}
 
       <Card className="mb-6">
